@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 
 import { RegisterRoutingModule } from './register-routing.module';
 import { RegisterComponent } from './register.component';
+import { ReactiveFormsModule} from "@angular/forms";
+import {AuthModule} from "../../auth.module";
+import {MaterialModule} from "../../../../shared/material/material.module";
 
 
 @NgModule({
@@ -11,7 +14,10 @@ import { RegisterComponent } from './register.component';
   ],
   imports: [
     CommonModule,
-    RegisterRoutingModule
+    RegisterRoutingModule,
+    ReactiveFormsModule,
+    AuthModule,
+    MaterialModule
   ]
 })
 export class RegisterModule { }
