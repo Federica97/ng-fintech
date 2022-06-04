@@ -1,1 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file, and also import other style files */
+
+:root {
+  --indigo-primary: #3F51B5;
+  --light-black: #404040;
+  --light-black-30: #4D4D4D;
+  --light-black-35: #595959;
+  --light-black-55: #8C8C8C;
+  --amber: #FFA000;
+  --dark-white: #E5E6E4;
+  --success: #AED581;
+}
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  color: var(--light-black);
+  background-color: var(--dark-white);
+}
+
+
+.snackbar {
+  background: var(--success);
+  color: var(--light-black);
+  text-align: center;
+  font-weight: bold;
+}
+
+
+.element-full-width {
+  width: 100%;
+}
+
+.aligned-with-icon{
+  position: absolute;
+  margin-top:7px;
+}
+
+
+.sidenav-link-active {
+  background-color: #BCD2E8;
+}
+
+
+td {
+  padding-right: 8px;
+}
