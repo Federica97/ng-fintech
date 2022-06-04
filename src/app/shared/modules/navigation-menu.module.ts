@@ -1,12 +1,24 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NavigationMenuComponent } from './navigation-menu.component';
+import {MaterialModule} from "../material/material.module";
+import {RouterModule} from "@angular/router";
+import {CoreModule} from "../../core/core.module";
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    NavigationMenuComponent
+  ],
   imports: [
-    CommonModule
+    CommonModule,
+    MaterialModule,
+    RouterModule,
+    CoreModule
+  ],
+  exports: [
+    NavigationMenuComponent
   ]
 })
 export class NavigationMenuModule { }
