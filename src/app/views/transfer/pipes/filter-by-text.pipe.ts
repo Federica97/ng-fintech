@@ -6,12 +6,12 @@ import {Contact} from "../../../models/contact";
 })
 export class FilterByTextPipe implements PipeTransform {
 
-  transform(contacts: Contact[], text: string) {
+  transform(contacts: Contact[] | null, text: string) {
     if(text === '') {
       return contacts;
     }
 
-    return contacts.filter(contact => {
+    return contacts?.filter(contact => {
       const fullName = contact.name.toLowerCase() + ' ' + contact.surname.toLowerCase();
       const searchedText = text.toLowerCase();
       return contact.name.toLowerCase().includes(searchedText) || contact.surname.toLowerCase().includes(searchedText) ||

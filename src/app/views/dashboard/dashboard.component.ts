@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'ac-dhashboard',
+  selector: 'ac-dashboard',
   template: `
-    <p>
-      dhashboard works!
-    </p>
+   <h1 class="container mt-3 text-center">Welcome to Fintech</h1>
   `,
   styles: [
   ]
