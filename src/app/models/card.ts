@@ -1,6 +1,8 @@
-export interface Contact {
+export interface Card {
   _id: string;
-  name: string;
-  surname: string;
-  iban: string;
+  number: string;
+  ownerId: string;
+  owner: string;
+  type: 'visa' | 'mastercard';
+  amount: number;
 }
