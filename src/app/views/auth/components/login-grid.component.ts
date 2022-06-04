@@ -1,16 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
-  selector: 'ac-login-grid',
+  selector: 'ac-login',
   template: `
-    <p>
-      login-grid works!
-    </p>
+
+        <mat-card class="mat-elevation-z4">
+          <mat-card-title class="text-center pb-3" *ngIf="title">{{title}}</mat-card-title>
+          <mat-card-content>
+            <ng-content select=".form-column"></ng-content>
+          </mat-card-content>
+        </mat-card>
+
   `,
   styles: [
+    `
+      mat-card-title {
+        color: var(--light-black);
+      }
+
+    `
   ]
 })
-export class LoginGridComponent implements OnInit {
+export class LoginComponent implements OnInit {
+  @Input() title: string | undefined;
 
   constructor() { }
 
