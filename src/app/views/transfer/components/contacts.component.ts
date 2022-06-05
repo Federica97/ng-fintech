@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {Contact} from "../../../models/contact";
 import {ContactForm} from "../../../models/contact-form";
-import {BehaviorSubject, combineLatest, map, Observable, of} from "rxjs";
+import {BehaviorSubject, combineLatest, map, Observable} from "rxjs";
 import {Store} from "@ngrx/store";
 import * as Actions from "../store/contacts/contacts.actions"
 import {environment} from "../../../../environments/environment";
@@ -15,7 +15,7 @@ import {SnackbarComponent} from "../../../shared/components/snackbar.component";
   selector: 'ac-contacts',
   template: `
     <div mat-dialog-content class="contact-dialog">
-      <ng-container *ngIf="showMainContactView">
+      <ng-container *ngIf="(state$ | async)?.type === 'list'">
         <ac-contact-list
           [contacts]="contacts$ | async"
           (deleteContact)="deleteContactHandler($event)"
@@ -24,11 +24,11 @@ import {SnackbarComponent} from "../../../shared/components/snackbar.component";
         </ac-contact-list>
         <div mat-dialog-actions align="end">
           <button mat-stroked-button (click)="onNoClick()">Go back</button>
-          <button mat-raised-button color="primary" (click)="showMainContactView=!showMainContactView">New Contact
+          <button mat-raised-button color="primary" (click)="state$.next({type:'new'})">New Contact
           </button>
         </div>
       </ng-container>
-      <ng-container *ngIf="!showMainContactView">
+      <ng-container *ngIf="(state$ | async)?.type === 'edit' || (state$ | async)?.type === 'new'">
         <button mat-stroked-button class="element-full-width mb-3" (click)="goBackToListView()">Go
           Back
         </button>
@@ -49,10 +49,16 @@ import {SnackbarComponent} from "../../../shared/components/snackbar.component";
 export class ContactsComponent implements OnInit{
 
   showMainContactView: boolean = true;
-  selectedContactId$ = new BehaviorSubject<string>('');
+  state$ = new BehaviorSubject<{type: 'list' | 'new' | 'edit', id?: string}>({type:'list'});
 
-  selectedContact$ = combineLatest([this.contacts$, this.selectedContactId$]).pipe(
-    map(([contacts, contactId]) => contacts.find(contact => contact._id === contactId))
+
+  selectedContact$ = combineLatest([this.contacts$, this.state$]).pipe(
+    map(([contacts, state]) => {
+      if(state.type==='edit') {
+        return contacts.find(c => c._id === state.id);
+      }
+      else return null;
+    })
   )
 
   constructor(
@@ -76,12 +82,12 @@ export class ContactsComponent implements OnInit{
 
 
   editContactHandler(contactId: string) {
-    this.selectedContactId$.next(contactId);
+    this.state$.next({type: 'edit', id: contactId});
     this.showMainContactView = false;
   }
 
   goBackToListView() {
-    this.selectedContactId$.next('');
+    this.state$.next({type: 'list'});
     this.showMainContactView=!this.showMainContactView;
   }
 
@@ -89,15 +95,14 @@ export class ContactsComponent implements OnInit{
     this.dialogRef.close();
   }
 
-  saveContactHandler(data: { contactForm: ContactForm; isEditMode: boolean; selectedContactId?: string }) {
-      if(data.isEditMode && !!data.selectedContactId) {
-        this.store.dispatch(Actions.editContact({id: data.selectedContactId, contact: data.contactForm}))
-        this.selectedContactId$.next('');
+  saveContactHandler(contact: ContactForm) {
+      if(this.state$.value.type==='edit' && this.state$.value.id) {
+        this.store.dispatch(Actions.editContact({id: this.state$.value.id, contact: contact}))
       }
       else {
-        this.store.dispatch(Actions.addContact({contact: data.contactForm}))
+        this.store.dispatch(Actions.addContact({contact: contact}))
       }
-      this.showMainContactView = !this.showMainContactView;
+    this.state$.next({type: 'list'});
   }
 }
 
