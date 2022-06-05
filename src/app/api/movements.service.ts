@@ -8,9 +8,9 @@ import {Movement} from "../models/movement";
 export class MovementsService {
 
   constructor(private http: HttpClient) {}
-
-  getMovements(cardId:string, limit:string='5', offset:string='0'): Observable<{ total: number, data: Movement[] }> {
-    return this.http.get<{ total: number, data: Movement[] }>(`${environment.apiUrl}/cards/${cardId}/movements?limit=${limit}&offset=${offset}`)
+  
+  getMovements(cardId:string | null, limit:string='5', offset:string='0'): Observable<{ total: number, data: Movement[] }> {
+    return this.http.get<{ total: number, data: Movement[] }>
+    (`${environment.apiUrl}/cards/${cardId}/movements?limit=${limit}&offset=${offset}`)
   }
-
 }
