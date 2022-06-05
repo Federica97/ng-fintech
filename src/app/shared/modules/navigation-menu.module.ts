@@ -15,7 +15,6 @@ import {CoreModule} from "../../core/core.module";
     CommonModule,
     MaterialModule,
     RouterModule,
-    CoreModule
   ],
   exports: [
     NavigationMenuComponent
