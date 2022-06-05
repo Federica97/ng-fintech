@@ -4,6 +4,8 @@ import {SnackbarComponent} from "../../../../shared/components/snackbar.componen
 import {environment} from "../../../../../environments/environment";
 import {AbstractControl, FormBuilder, FormControl, FormGroupDirective, NgForm, ValidationErrors, Validators} from "@angular/forms";
 import {ErrorStateMatcher} from "@angular/material/core";
+import {AuthService} from "../../../../core/services/auth.service";
+import { Credentials } from 'src/app/models/credentials';
 
 function equalPassword(c: AbstractControl): ValidationErrors | null {
   const password = c.get('password');
@@ -215,7 +217,7 @@ export class RegisterComponent {
     }
   );
 
-  constructor(private snackBar: MatSnackBar, private fb: FormBuilder) {
+  constructor(private snackBar: MatSnackBar, private fb: FormBuilder, private authService: AuthService) {
   }
 
   get email() {
@@ -240,12 +242,26 @@ export class RegisterComponent {
 
   register() {
     if (this.registerForm.valid) {
-      console.log("Register");
-      this.snackBar.openFromComponent(SnackbarComponent, {
-        data: 'Thank you for Registering',
-        duration: environment.snackBarDuration * 1000,
-        panelClass: ['snackbar']
+
+      console.log('valid')
+      const credentials: Credentials = {
+        email: this.registerForm.get('email')!.value,
+        password: this.registerForm.get('password')!.value,
+        name: this.registerForm.get('firstname')!.value,
+        surname: this.registerForm.get('surname')!.value
+      };
+
+      this.authService.register(credentials).subscribe({
+        next: () => {
+          this.snackBar.openFromComponent(SnackbarComponent, {
+            data: 'Thank you for Registering',
+            duration: environment.snackBarDuration * 1000,
+            panelClass: ['snackbar']
+          });
+        }
       });
+
+
     }
   }
 

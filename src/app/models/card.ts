@@ -1,4 +1,4 @@
-import {Movement} from "./movement";
+
 
 export interface Card {
   _id: string;

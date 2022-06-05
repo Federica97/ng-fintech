@@ -15,6 +15,7 @@ import {cardsFeature} from "./store/card.reducer";
 import {EffectsModule} from "@ngrx/effects";
 import {CardsEffects} from "./store/card.effects";
 import {CardsService} from "../../api/cards.service";
+import {CreditCardNumberFormatDirective} from "./directives/credit-card-number-format.directive";
 
 
 
@@ -23,7 +24,8 @@ import {CardsService} from "../../api/cards.service";
     CardComponent,
     CardListComponent,
     CardFormComponent,
-    DeleteCardModalComponent
+    DeleteCardModalComponent,
+    CreditCardNumberFormatDirective
   ],
   imports: [
     CommonModule,

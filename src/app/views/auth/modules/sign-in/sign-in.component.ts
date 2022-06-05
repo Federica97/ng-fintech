@@ -1,8 +1,8 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, NgForm, Validators} from "@angular/forms";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {SnackbarComponent} from "../../../../shared/components/snackbar.component";
-import {environment} from "../../../../../environments/environment";
+import {Component} from '@angular/core';
+import {FormBuilder, Validators} from "@angular/forms";
+import {AuthService} from "../../../../core/services/auth.service";
+import {Router} from "@angular/router";
+
 
 @Component({
   selector: 'ac-sign-in',
@@ -123,7 +123,7 @@ export class SignInComponent  {
       ],
   });
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
 
   get email() {
     return this.signInForm.get('email')!;
@@ -135,8 +135,10 @@ export class SignInComponent  {
 
   signIn() {
     if(this.signInForm.valid) {
-      console.log(this.signInForm.value);
-      //TODO: sign in
+      const {email, password} = this.signInForm.value;
+      this.authService.login(email, password).subscribe({
+        next: () => this.router.navigateByUrl('/dashboard')
+      })
     }
   }
 }

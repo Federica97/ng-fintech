@@ -16,6 +16,8 @@ import {EffectsModule} from "@ngrx/effects";
 import {RouterEffects} from "./store/router/router.effects";
 import {StoreModule} from "@ngrx/store";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
+import {HttpClientXsrfModule} from "@angular/common/http";
+import {CoreModule} from "./core/core.module";
 registerLocaleData(localeIt)
 
 @NgModule({
@@ -30,9 +32,14 @@ registerLocaleData(localeIt)
     MaterialModule,
     NavigationMenuModule,
     DashboardModule,
+    CoreModule,
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({}),
+    HttpClientXsrfModule.withOptions({
+      cookieName: 'XSRF-TOKEN',
+      headerName: 'X-XSRF-TOKEN',
+    })
   ],
   providers: [{provide: LOCALE_ID, useValue: 'it' }],
   bootstrap: [AppComponent]

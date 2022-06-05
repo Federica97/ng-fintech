@@ -4,6 +4,5 @@ export interface CardForm {
   surname: string;
   number: string;
   csc: number;
-
 }
 

@@ -1,4 +1,7 @@
 import {Component, OnInit} from '@angular/core';
+import {AuthService} from "../../core/services/auth.service";
+import {BehaviorSubject} from "rxjs";
+import {User} from "../../models/user";
 
 @Component({
   selector: 'ac-navigation-menu',
@@ -40,9 +43,9 @@ import {Component, OnInit} from '@angular/core';
             <div mat-line>Taxes</div>
           </mat-list-item>
           <mat-divider></mat-divider>
-          <mat-list-item>
+          <mat-list-item (click)="logout()">
             <mat-icon mat-list-icon matPrefix>person</mat-icon>
-            <div mat-line>Nome Cognome</div>
+            <div mat-line *ngIf="(user$ | async) as user"> {{user.displayName}}</div>
             <div mat-line>Logout</div>
           </mat-list-item>
         </mat-list>
@@ -52,10 +55,6 @@ import {Component, OnInit} from '@angular/core';
       <mat-toolbar color="primary">
         <span>Fintech</span>
         <span class="example-spacer"></span>
-        <!--<button mat-button routerLink="/login/sign-in" class="example-icon favorite-icon"
-                aria-label="Example icon-button with heart icon">
-          Login
-        </button>-->
       </mat-toolbar>
       <router-outlet></router-outlet>
       </mat-drawer-content>
@@ -96,7 +95,14 @@ import {Component, OnInit} from '@angular/core';
 })
 export class NavigationMenuComponent {
 
-  constructor() {
+  user$ = new BehaviorSubject<User | null>(null);
+
+  constructor(private authService: AuthService) {
+    this.authService.fetchUser().subscribe(user => this.user$.next(user));
+  }
+
+  logout() {
+    this.authService.logout();
   }
 
 
