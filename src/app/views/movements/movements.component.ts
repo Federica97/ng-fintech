@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {BehaviorSubject, combineLatest, map, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, map, share, switchMap, tap} from 'rxjs';
 import {Card} from "../../models/card";
-import {Store} from "@ngrx/store";
 import {MovementsService} from "../../api/movements.service";
 import {Movement} from "../../models/movement";
 import {CardsService} from "../../api/cards.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'ac-movements',
@@ -41,19 +41,26 @@ import {CardsService} from "../../api/cards.service";
         >
         </ac-movement>
       </div>
-
-      <button *ngIf="selectedCardId$ | async" mat-stroked-button class="element-full-width">Load more</button>
+      <button *ngIf="shouldLoadMore$ | async" mat-stroked-button class="element-full-width mb-5" (click)="loadMore()">Load
+        more
+      </button>
     </div>
-
   `,
   styles: [],
 })
 export class MovementsComponent implements OnInit {
-  cards$: Observable<Card[]> = new BehaviorSubject([]);
-  movements$: Observable<Movement[] | null> = new BehaviorSubject([]);
-  balance$: Observable<number | undefined> = new BehaviorSubject(0);
 
-  selectedCardId$ = new BehaviorSubject('');
+  cards$ = new BehaviorSubject<Card[]>([]);
+  movements$ = new BehaviorSubject<Movement[]>([]);
+  total$ = new BehaviorSubject<number>(0);
+  selectedCardId$ = this.activatedRoute.paramMap.pipe(
+    map(params => params.get('cardId'))
+  )
+
+
+  balance$ = this.movements$.pipe(
+    map(movements => movements?.reduce((tot, item) => tot + item.amount, 0))
+  );
 
   selectedCard$ = combineLatest([
     this.cards$,
@@ -62,22 +69,52 @@ export class MovementsComponent implements OnInit {
     map(([cards, cardId]) => cards.find(c => c._id === cardId)),
   );
 
- onCardChange(cardId: string) {
-    this.selectedCardId$.next(cardId);
+  shouldLoadMore$ = combineLatest([this.movements$, this.total$]).pipe(
+    map(([movements, tot]) => {
+      return movements.length < tot;
+    })
+  )
 
-    this.movements$ = this.movementsService.getMovements(cardId).pipe(
-      map(obj => obj.data )
+  limit: number = 5;
+
+
+  constructor(
+    private movementsService: MovementsService,
+    private cardsService: CardsService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
+  ) {
+    this.selectedCardId$.pipe(
+      switchMap((id) => this.movementsService.getMovements(id)),
+      share()
+    ).subscribe((movements) => {
+        this.movements$.next(movements.data);
+        this.total$.next(movements.total);
+      }
     )
-
-    this.balance$ = this.movements$.pipe(
-      map(movements => movements?.reduce((tot, item) => tot + item.amount,0))
-    );
   }
-
-  constructor(private store: Store, private movementsService: MovementsService, private cardsService: CardsService) {}
 
   ngOnInit(): void {
-    this.cards$ = this.cardsService.getCards();
+    this.cardsService.getCards().subscribe(cards => this.cards$.next(cards))
   }
+
+
+  onCardChange(cardId: string) {
+    this.router.navigateByUrl('dashboard/movements/'+ cardId);
+  }
+
+  loadMore() {
+    this.limit = this.limit + 5;
+
+    this.selectedCardId$.pipe(
+      switchMap((id) => this.movementsService.getMovements(id, String(this.limit))),
+      share()
+    ).subscribe((movements) => {
+        this.movements$.next(movements.data);
+      }
+    )
+
+  }
+
 
 }
