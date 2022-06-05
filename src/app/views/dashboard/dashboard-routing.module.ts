@@ -6,9 +6,11 @@ const routes: Routes = [
   { path: '', component: DashboardComponent },
   { path: 'cards', loadChildren: () => import('../card/card.module').then(m => m.CardModule) },
   { path: 'movements', loadChildren: () => import('../movements/movements.module').then(m => m.MovementsModule) },
+  { path: 'movements/:cardId', loadChildren: () => import('../movements/movements.module').then(m => m.MovementsModule) },
   { path: 'transfer', loadChildren: () => import('../transfer/transfer.module').then(m => m.TransferModule) },
 
 ];
+
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
