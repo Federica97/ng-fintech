@@ -3,8 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'ac-root',
   template: `
-   
-    <router-outlet></router-outlet>
+    <ac-navigation-menu></ac-navigation-menu>
   `,
   styles: []
 })
