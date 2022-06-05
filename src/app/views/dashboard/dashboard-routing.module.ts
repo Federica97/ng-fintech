@@ -14,7 +14,7 @@ const routes: Routes = [
       { path: 'movements/:cardId', loadChildren: () => import('../movements/movements.module').then(m => m.MovementsModule) },
       { path: 'transfer', loadChildren: () => import('../transfer/transfer.module').then(m => m.TransferModule) },
     ]
-  },
+  }]
 
 
 @NgModule({
