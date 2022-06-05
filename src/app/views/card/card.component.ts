@@ -7,6 +7,7 @@ import {environment} from "../../../environments/environment";
 import {Store} from "@ngrx/store";
 import {selectCards} from "./store/card.selectors";
 import * as Actions from './store/card.actions';
+import {Router} from "@angular/router";
 
 
 @Component({
@@ -53,7 +54,7 @@ export class CardComponent implements OnInit {
   isFormOpened: boolean = false;
   cards$ = this.store.select(selectCards);
 
-  constructor(private snackBar: MatSnackBar, private store: Store) {}
+  constructor(private snackBar: MatSnackBar, private store: Store, private router: Router) {}
 
   ngOnInit(): void {
      this.store.dispatch(Actions.getCards());
@@ -81,7 +82,7 @@ export class CardComponent implements OnInit {
   }
 
   viewTransactionHandler(cardId: string) {
-    //TODO
+    this.router.navigateByUrl('/dashboard/movements/'+ cardId);
   }
 
   openSnackbar(dataToShow: string) {
