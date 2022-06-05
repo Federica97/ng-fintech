@@ -45,7 +45,7 @@ import {ContactForm} from "../../../models/contact-form";
 export class ContactFormComponent implements OnInit{
 
   @Input() selectedContact: Contact | null = null;
-  @Output() saveContact = new EventEmitter<{contactForm: ContactForm, isEditMode: boolean, selectedContactId?: string}>();
+  @Output() saveContact = new EventEmitter<ContactForm>();
 
   contactForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(5)]],
@@ -62,7 +62,6 @@ export class ContactFormComponent implements OnInit{
       this.surname.setValue(this.selectedContact.surname);
       this.iban.setValue(this.selectedContact.iban);
     }
-    console.log(this.selectedContact)
   }
 
   get name() {
@@ -78,13 +77,7 @@ export class ContactFormComponent implements OnInit{
   }
 
   save() {
-    if(this.selectedContact) {
-      this.saveContact.emit({contactForm: this.contactForm.value, isEditMode: true, selectedContactId: this.selectedContact._id} );
-      this.selectedContact = null;
-    }
-    else {
-      this.saveContact.emit({contactForm: this.contactForm.value, isEditMode: false} );
-    }
+    this.saveContact.emit(this.contactForm.value);
   }
 
 
