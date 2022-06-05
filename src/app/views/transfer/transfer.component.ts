@@ -9,7 +9,7 @@ import {Contact} from "../../models/contact";
 import {selectContacts} from "./store/contacts/contacts.selectors";
 import {Store} from "@ngrx/store";
 import * as Actions from "./store/contacts/contacts.actions";
-import {BehaviorSubject, map, Observable} from "rxjs";
+import {BehaviorSubject} from "rxjs";
 import {CardsService} from "../../api/cards.service";
 import {Card} from "../../models/card";
 
@@ -99,7 +99,7 @@ import {Card} from "../../models/card";
 })
 export class TransferComponent implements OnInit {
   contacts$ = this.store.select(selectContacts);
-  cards$: Observable<Card[]> = new BehaviorSubject([]);
+  cards$ = new BehaviorSubject<Card[]>([]);
 
 
   transferForm = this.fb.group({
@@ -180,7 +180,7 @@ export class TransferComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(Actions.getContacts());
-    this.cards$ = this.cardsService.getCards();
+    this.cardsService.getCards().subscribe(res => this.cards$.next(res));
   }
 
   openContactsListFormDialog(): void {
